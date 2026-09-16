@@ -1,0 +1,42 @@
+
+<!doctype html><html lang='th'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Budget Pro Ultimate v8 Foundation</title>
+<link rel='manifest' href='manifest.json'>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<style>
+body{font-family:-apple-system;margin:0;background:#f5f7fb;padding-bottom:70px}
+header{background:linear-gradient(135deg,#0f766e,#2563eb);color:#fff;padding:18px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.card{background:#fff;border-radius:18px;padding:16px}.card b{font-size:24px}
+.panel{background:#fff;margin:14px;padding:14px;border-radius:18px}
+button,input,select{width:100%;padding:12px;margin-top:8px;border-radius:12px;border:1px solid #ddd;box-sizing:border-box}
+button{background:#2563eb;color:#fff;border:none}
+#modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center}
+#modal.show{display:flex}.sheet{background:#fff;padding:18px;border-radius:18px;width:92%;max-width:380px}
+nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid #ddd;display:flex}
+nav button{flex:1;background:#fff;color:#666;border:none;font-size:22px}
+</style></head><body>
+<header><h2>🏡 Budget Pro Ultimate v8 Foundation</h2><p>ฐานโปรเจกต์ใหม่</p></header>
+<div class='cards'><div class='card'><div>งบรวม</div><b id=t>3,000,000</b></div><div class='card'><div>ใช้ไป</div><b id=s>0</b></div><div class='card'><div>คงเหลือ</div><b id=r>3,000,000</b></div><div class='card'><div>ความคืบหน้า</div><b id=p>0%</b></div></div>
+<div class='panel'><button id=open>➕ เพิ่มรายการ</button><canvas id=pie height=180></canvas></div>
+<div class='panel'><h3>Master Budget</h3><div id=catList></div><input id=newCat placeholder='เพิ่มหมวดเอง'><button id=addCat>เพิ่มหมวด</button></div>
+<div id=modal><div class=sheet><input id=name placeholder='ชื่อรายการ'><select id=cat></select><input id=amt type=number placeholder='จำนวนเงิน'><button id=save>บันทึก</button><button id=close>ยกเลิก</button></div></div>
+<nav><button>🏠</button><button>💰</button><button>💸</button><button>👷</button><button>📄</button><button>⚙️</button></nav>
+<script>
+const db=JSON.parse(localStorage.bp8||'{"budget":3000000,"cats":["ที่ดิน","ถมที่","เคลียริ่ง","โครงสร้าง","เขื่อน","ถนน","ไฟฟ้า","เครื่องใช้ไฟฟ้า","อุปกรณ์ตกแต่ง","รั้วบ้าน","จัดสวน"],"items":[]}');
+const $=i=>document.getElementById(i);let chart;
+function render(){
+ $('cat').innerHTML=db.cats.map(c=>`<option>${c}</option>`).join('');
+ const sums={};db.cats.forEach(c=>sums[c]=0);db.items.forEach(i=>sums[i.c]+=i.a);
+ const spent=db.items.reduce((t,i)=>t+i.a,0);
+ $('t').textContent=db.budget.toLocaleString();$('s').textContent=spent.toLocaleString();$('r').textContent=(db.budget-spent).toLocaleString();$('p').textContent=Math.round(spent/db.budget*100)+'%';
+ $('catList').innerHTML=db.cats.map(c=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee"><span>${c}</span><b>${(sums[c]||0).toLocaleString()}</b></div>`).join('');
+ if(chart)chart.destroy();chart=new Chart($('pie'),{type:'pie',data:{labels:db.cats,datasets:[{data:db.cats.map(c=>sums[c])}]},options:{plugins:{legend:{position:'bottom'}}}});
+ localStorage.bp8=JSON.stringify(db);
+}
+$('open').onclick=()=>$('modal').classList.add('show');
+$('close').onclick=()=>$('modal').classList.remove('show');
+$('addCat').onclick=()=>{const c=$('newCat').value.trim();if(c&&!db.cats.includes(c)){db.cats.push(c);$('newCat').value='';render();}};
+$('save').onclick=()=>{const n=$('name').value.trim();const a=+$('amt').value;if(!n||!a)return alert('กรอกข้อมูล');db.items.push({n,c:$('cat').value,a});$('name').value='';$('amt').value='';$('modal').classList.remove('show');render();};
+render();
+</script></body></html>
