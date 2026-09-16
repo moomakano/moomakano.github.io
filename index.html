@@ -1,14 +1,1 @@
-<!doctype html><html lang='th'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<link rel='manifest' href='manifest.json'><meta name='theme-color' content='#16A34A'>
-<title>Budget Pro</title><style>body{font-family:system-ui;margin:0;background:#f5f7fb}.top{background:linear-gradient(135deg,#16A34A,#2563EB);color:#fff;padding:18px}.wrap{padding:16px}.card{background:#fff;padding:14px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:12px}button{background:#16A34A;color:#fff;border:0;padding:12px 16px;border-radius:10px}</style></head>
-<body><div class='top'><h2>🏡 Budget Pro V8</h2><div>ติดตั้งบน iPhone ได้ (PWA)</div></div>
-<div class='wrap'><div class='card'><b>งบรวม:</b> 5,000,000 บาท<br><b>จ่ายแล้ว:</b> <span id=p>0</span> บาท</div>
-<div class='card'><input id=item placeholder='รายการ' style='width:100%;padding:10px'><br><br><input id=amt type=number placeholder='จำนวนเงิน' style='width:100%;padding:10px'><br><br><button onclick='add()'>บันทึก</button></div>
-<div class='card'><div id=list></div></div></div>
-<script>
-let r=JSON.parse(localStorage.getItem('bpv8')||'[]');
-function f(){let paid=r.reduce((a,b)=>a+Number(b.a||0),0);p.textContent=paid.toLocaleString('th-TH');list.innerHTML=r.map((x,i)=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee"><span>${x.i}</span><span>${Number(x.a).toLocaleString('th-TH')}</span></div>`).join('');localStorage.setItem('bpv8',JSON.stringify(r));}
-function add(){if(!item.value||!amt.value)return;r.unshift({i:item.value,a:amt.value});item.value='';amt.value='';f();}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
-f();
-</script></body></html>
+<!doctype html><html lang='th'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><link rel='manifest' href='manifest.json'><link rel='stylesheet' href='style.css'><title>Budget Pro V10</title></head><body><div class='top'><h1>🏡 Budget Pro V10 Ultimate</h1></div><div class='wrap'><div class='cards'><div class='card green'><small>งบรวม</small><h2>5,000,000</h2></div><div class='card blue'><small>ใช้ไป</small><h2 id='spent'>0</h2></div><div class='card yellow'><small>คงเหลือ</small><h2 id='remain'>5,000,000</h2></div><div class='card pink'><small>ความคืบหน้า</small><h2 id='progress'>0%</h2></div></div><div class='card' style='margin-top:16px'><h3>เพิ่มรายการ</h3><p><input id='item' placeholder='รายการ' style='width:100%;padding:12px'></p><p><input id='amt' type='number' placeholder='จำนวนเงิน' style='width:100%;padding:12px'></p><p><select id='status' style='width:100%;padding:12px'><option>ยังไม่จ่าย</option><option>มัดจำ</option><option>จ่ายแล้ว</option></select></p><button onclick='add()'>บันทึก</button></div><div class='card' style='margin-top:16px'><table><thead><tr><th>รายการ</th><th>จำนวน</th><th>สถานะ</th><th></th></tr></thead><tbody id='tb'></tbody></table></div></div><script src='app.js'></script></body></html>
