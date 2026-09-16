@@ -1,0 +1,23 @@
+
+<!doctype html><html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Budget Pro X v2.0</title>
+<link rel="manifest" href="manifest.json?v=2.0">
+<link rel="stylesheet" href="style.css?v=2.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head><body>
+<header><h2>🏡 Budget Pro X v2.0</h2><small>GitHub Pages + Safari No Cache</small></header>
+<div class="cards">
+<div class="card g"><span>งบรวม</span><b id=t>3,000,000</b></div>
+<div class="card b"><span>ใช้ไป</span><b id=s>0</b></div>
+<div class="card y"><span>คงเหลือ</span><b id=r>3,000,000</b></div>
+<div class="card p"><span>ความคืบหน้า</span><b id=pc>0%</b></div>
+</div>
+<div class="panel"><button id=open>➕ เพิ่มรายการ</button></div>
+<div class="panel"><canvas id=pie height=180></canvas></div>
+<div id=modal class=hide><div class=sheet><h3>เพิ่มรายการ</h3><input id=n placeholder="ชื่อรายการ"><select id=cat></select><input id=a type=number placeholder="จำนวนเงิน"><button id=save>บันทึก</button><button id=close>ยกเลิก</button></div></div>
+<nav><button>🏠</button><button>💰</button><button>💸</button><button>👷</button><button>📄</button><button>⚙️</button></nav>
+<script src="app.js?v=2.0"></script>
+</body></html>
