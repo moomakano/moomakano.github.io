@@ -1,0 +1,47 @@
+
+<!doctype html><html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Budget Pro v6.1</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head><body>
+<header><h2>🏡 Budget Pro v6.1</h2></header>
+<main>
+<section id="home" class="page active">
+<div class="cards">
+<div class="card g"><span>งบรวม</span><b id="total">3,000,000</b></div>
+<div class="card b"><span>ใช้ไป</span><b id="spent">0</b></div>
+<div class="card y"><span>คงเหลือ</span><b id="remain">3,000,000</b></div>
+<div class="card p"><span>ความคืบหน้า</span><b id="percent">0%</b></div>
+</div>
+<button id="openBtn">➕ เพิ่มรายการ</button>
+<div class="panel"><canvas id="pieChart" height="180"></canvas></div>
+</section>
+
+<section id="budget" class="page"><div class="panel"><h3>Master Budget</h3><div id="budgetList"></div><input id="newCat" placeholder="เพิ่มหมวดเอง"><button id="addCatBtn">เพิ่มหมวด</button></div></section>
+<section id="expense" class="page"><div class="panel"><input id="searchBox" placeholder="ค้นหา"><div id="expenseList"></div></div></section>
+<section id="contractor" class="page"><div class="panel"><input id="conName" placeholder="ชื่อผู้รับเหมา"><input id="conPhone" placeholder="เบอร์"><button id="saveConBtn">บันทึก</button><div id="contractorList"></div></div></section>
+<section id="payment" class="page"><div class="panel"><input id="dueDate" type="date"><button id="saveDueBtn">เพิ่มงวด</button><div id="dueList"></div></div></section>
+<section id="settings" class="page"><div class="panel"><input id="budgetInput" type="number"><button id="saveBudgetBtn">บันทึกงบ</button></div></section>
+</main>
+
+<div id="modal" class="hidden"><div class="sheet">
+<h3>เพิ่มรายการ</h3>
+<input id="itemName" placeholder="ชื่อรายการ">
+<select id="itemCat"></select>
+<input id="itemAmount" type="number" placeholder="จำนวนเงิน">
+<button id="saveItemBtn">บันทึก</button>
+<button id="cancelBtn">ยกเลิก</button>
+</div></div>
+
+<nav id="bottomNav">
+<button data-page="home">🏠</button>
+<button data-page="budget">💰</button>
+<button data-page="expense">💸</button>
+<button data-page="contractor">👷</button>
+<button data-page="payment">📄</button>
+<button data-page="settings">⚙️</button>
+</nav>
+<script src="app.js"></script>
+</body></html>
