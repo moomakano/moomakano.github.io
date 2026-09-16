@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang='th'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Budget Pro 8 Premium</title><link rel='manifest' href='manifest.json'>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#eef3f8}
+header{background:linear-gradient(135deg,#0f766e,#2563eb);color:#fff;padding:22px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}.card{border-radius:18px;padding:14px;font-weight:600}.g{background:#dcfce7}.b{background:#dbeafe}.y{background:#fef3c7}.p{background:#fce7f3}
+.page{display:none;padding:14px 14px 90px}.page.active{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:10px}
+.fab{position:fixed;right:18px;bottom:72px;width:62px;height:62px;border:none;border-radius:50%;background:#16a34a;color:#fff;font-size:32px}
+table{width:100%;background:#fff;border-collapse:collapse;border-radius:14px;overflow:hidden}th{background:#2563eb;color:#fff}td,th{padding:10px;border-bottom:1px solid #eee}
+input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px;margin:6px 0;box-sizing:border-box}
+#modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center}.box{background:#fff;width:92%;max-width:420px;border-radius:18px;padding:18px}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#e5e7eb;margin:4px;font-size:13px}
+canvas{background:#fff;border-radius:14px}
+</style></head><body>
+<header><h2 style='margin:0'>🏡 Budget Pro 8 Premium</h2><div>สร้างบ้าน • รีโนเวท • จัดสวน</div></header>
+<div class='cards'><div class='card g'>งบรวม<br><b id=t>5,000,000</b></div><div class='card b'>ใช้ไป<br><b id=u>0</b></div><div class='card y'>คงเหลือ<br><b id=l>5,000,000</b></div><div class='card p'>คืบหน้า<br><b id=p>0%</b></div></div>
+<section id=home class='page active'><h3>หมวดโครงการ</h3><span class=tag>โครงสร้าง</span><span class=tag>ไฟฟ้า</span><span class=tag>ประปา</span><span class=tag>เครื่องใช้ไฟฟ้า</span><span class=tag>อุปกรณ์ตกแต่ง</span><span class=tag>จัดสวน</span></section>
+<section id=expenses class=page><input id=q placeholder='ค้นหารายการ...' oninput='render()'><table><thead><tr><th>รายการ</th><th>หมวด</th><th>ยอด</th><th></th></tr></thead><tbody id=tb></tbody></table></section>
+<section id=contractors class=page><input id=cn placeholder='ชื่อผู้รับเหมา'><input id=cp placeholder='เบอร์โทร'><button onclick='addCon()'>เพิ่มผู้รับเหมา</button><div id=cl></div></section>
+<section id=payments class=page><input id=st placeholder='ชื่องวดงาน'><input id=dt type=date><button onclick='addStage()'>เพิ่มงวด</button><div id=sl></div></section>
+<section id=charts class=page><canvas id=pie width=320 height=220></canvas></section>
+<section id=settings class=page><button onclick='if(confirm("ล้างข้อมูลทั้งหมด?")){localStorage.clear();location.reload()}'>ล้างข้อมูลทั้งหมด</button></section>
+<button class=fab onclick='openM()'>＋</button>
+<div id=modal><div class=box><h3>เพิ่มรายการ</h3><input id=n placeholder='รายการ'><input id=a type=number placeholder='จำนวนเงิน'><select id=c><option>โครงสร้าง</option><option>ไฟฟ้า</option><option>ประปา</option><option>เครื่องใช้ไฟฟ้า</option><option>อุปกรณ์ตกแต่ง</option><option>จัดสวน</option></select><input id=r type=file accept='image/*' capture='environment'><button onclick='save()'>บันทึก</button><button onclick='closeM()'>ยกเลิก</button></div></div>
+<nav><button onclick="show('home')">🏠</button><button onclick="show('expenses')">💸</button><button onclick="openM()">➕</button><button onclick="show('charts')">📊</button><button onclick="show('settings')">⚙️</button></nav>
+<script>
+let d=JSON.parse(localStorage.bp8||'[]'),cons=JSON.parse(localStorage.bp8c||'[]'),stg=JSON.parse(localStorage.bp8s||'[]');const T=5000000;
+const $=i=>document.getElementById(i);
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');if(id==='charts')draw();}
+function openM(){$('modal').style.display='flex'}function closeM(){$('modal').style.display='none'}
+function save(){if(!$('n').value||!$('a').value)return alert('กรอกข้อมูล');d.unshift({n:$('n').value,a:+$('a').value,c:$('c').value});localStorage.bp8=JSON.stringify(d);$('n').value='';$('a').value='';closeM();render();show('expenses');}
+function addCon(){if(!$('cn').value)return;cons.push({n:$('cn').value,p:$('cp').value});localStorage.bp8c=JSON.stringify(cons);list();}
+function addStage(){if(!$('st').value)return;stg.push({n:$('st').value,d:$('dt').value});localStorage.bp8s=JSON.stringify(stg);list();}
+function list(){$('cl').innerHTML=cons.map(x=>`<p>👷 ${x.n} • ${x.p}</p>`).join('');$('sl').innerHTML=stg.map(x=>`<p>📅 ${x.n} (${x.d||'-'})</p>`).join('');}
+function del(i){d.splice(i,1);localStorage.bp8=JSON.stringify(d);render();}
+function render(){let q=$('q').value.toLowerCase(),u=0;$('tb').innerHTML='';d.filter(x=>x.n.toLowerCase().includes(q)).forEach((x,i)=>{u+=x.a;$('tb').innerHTML+=`<tr><td>${x.n}</td><td>${x.c}</td><td>${x.a.toLocaleString()}</td><td><button onclick='del(${i})'>ลบ</button></td></tr>`});$('u').textContent=u.toLocaleString();$('l').textContent=(T-u).toLocaleString();$('p').textContent=Math.round(u/T*100)+'%';draw();}
+function draw(){let c=$('pie').getContext('2d');c.clearRect(0,0,320,220);let u=d.reduce((s,i)=>s+i.a,0),ang=u/T*Math.PI*2;c.beginPath();c.moveTo(110,110);c.fillStyle='#2563eb';c.arc(110,110,70,0,ang);c.fill();c.beginPath();c.moveTo(110,110);c.fillStyle='#dcfce7';c.arc(110,110,70,ang,Math.PI*2);c.fill();c.fillStyle='#111';c.fillText('ใช้ไป '+u.toLocaleString(),200,100);}
+render();list();
+</script></body></html>
