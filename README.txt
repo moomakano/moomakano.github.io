@@ -1,0 +1,1 @@
+เปิด GitHub Pages แล้วอัปโหลดทุกไฟล์ในโฟลเดอร์นี้ จากนั้นเปิด https://sutee.github.io ใน Safari แล้วกด Add to Home Screen
