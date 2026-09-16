@@ -1,0 +1,27 @@
+<!doctype html><html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Budget Pro">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Budget Pro Ultimate</title></head><body>
+<header><h2>🏡 Budget Pro Ultimate</h2><p>Home Construction Budget</p></header>
+<main>
+<section id=home class="page active"><div class=cards>
+<div class="card g"><span>งบรวม</span><b id=t></b></div>
+<div class="card b"><span>ใช้ไป</span><b id=s></b></div>
+<div class="card y"><span>คงเหลือ</span><b id=r></b></div>
+<div class="card p"><span>ความคืบหน้า</span><b id=p></b></div></div>
+<button id=open>➕ เพิ่มรายการ</button><div class=panel><canvas id=pie height=180></canvas></div></section>
+<section id=budget class=page><div class=panel><h3>Master Budget</h3><div id=budgetList></div><input id=newCat placeholder="เพิ่มหมวดใหม่เอง"><button id=addCat>เพิ่มหมวด</button></div></section>
+<section id=expense class=page><div class=panel><input id=q placeholder="ค้นหารายการ"><div id=list></div></div></section>
+<section id=contractor class=page><div class=panel><input id=cn placeholder="ชื่อผู้รับเหมา"><input id=cp placeholder="เบอร์โทร"><button id=saveCon>บันทึก</button><div id=cons></div></div></section>
+<section id=payment class=page><div class=panel><input id=due type=date><button id=saveDue>เพิ่มงวด</button><div id=dues></div></div></section>
+<section id=settings class=page><div class=panel><input id=budgetInput type=number><button id=saveBudget>บันทึกงบ</button><button id=backup>สำรองข้อมูล</button><input id=restore type=file accept=".json"></div></section>
+</main>
+<div id=modal class=hide><div class=sheet><h3>เพิ่มรายจ่าย</h3><input id=name placeholder="ชื่อรายการ"><select id=cat></select><input id=amt type=number placeholder="จำนวนเงิน"><button id=saveItem>บันทึก</button><button id=close>ยกเลิก</button></div></div>
+<nav id=nav><button data-page=home>🏠</button><button data-page=budget>💰</button><button data-page=expense>💸</button><button data-page=contractor>👷</button><button data-page=payment>📄</button><button data-page=settings>⚙️</button></nav>
+<script src="app.js"></script></body></html>
