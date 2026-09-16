@@ -1,0 +1,9 @@
+
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f3f4f6}
+.top{background:linear-gradient(135deg,#16a34a,#2563eb);color:#fff;padding:20px}
+.wrap{max-width:1000px;margin:auto;padding:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.green{background:#dcfce7}.blue{background:#dbeafe}.yellow{background:#fef3c7}.pink{background:#fce7f3}
+button,input,select{font:inherit}button{background:#16a34a;color:#fff;border:0;border-radius:12px;padding:12px}
+table{width:100%;border-collapse:collapse}th{background:#2563eb;color:#fff}th,td{padding:10px;border-bottom:1px solid #eee}
