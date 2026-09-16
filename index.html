@@ -1,0 +1,88 @@
+
+<!DOCTYPE html><html lang="th"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Budget Pro 8 Premium</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{font-family:-apple-system,sans-serif;background:#F4F7FB;margin:0;padding-bottom:90px}
+header{background:linear-gradient(135deg,#0F766E,#2563EB);color:#fff;padding:18px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
+.card{padding:14px;border-radius:16px;font-weight:700}.g{background:#DCFCE7}.b{background:#DBEAFE}.y{background:#FEF3C7}.p{background:#FCE7F3}
+.page{display:none}.page.active{display:block}
+.box{background:#fff;margin:12px;padding:14px;border-radius:16px}
+input,select{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box}
+button{padding:10px 14px;border:none;border-radius:10px;background:#2563EB;color:#fff}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:8px 0}
+nav button{background:none;color:#666;padding:6px}
+nav button.active{color:#2563EB;font-weight:bold}
+#modal{display:none;position:fixed;inset:0;background:#0007;align-items:center;justify-content:center}
+.modal{background:#fff;width:92%;max-width:380px;border-radius:16px;padding:16px}
+</style></head><body>
+<header><h2>🏡 Budget Pro 8 Premium</h2></header>
+
+<section id="dashboard" class="page active">
+<div class="cards">
+<div class="card g">งบรวม<div id=total></div></div>
+<div class="card b">ใช้ไป<div id=spent></div></div>
+<div class="card y">คงเหลือ<div id=remain></div></div>
+<div class="card p">ความคืบหน้า<div id=prog></div></div></div>
+<div class="box"><button onclick="openModal()">➕ เพิ่มรายการ</button></div>
+<div class="box"><h3>กราฟค่าใช้จ่าย</h3><canvas id=pie height=220></canvas></div>
+<div class="box"><h3>รายเดือน</h3><canvas id=bar height=220></canvas></div>
+</section>
+
+<section id="expenses" class="page"><div class="box"><h3>รายจ่าย</h3><input id=search placeholder="ค้นหา" oninput="render()"><div id=elist></div></div></section>
+
+<section id="contractors" class="page"><div class="box"><h3>ผู้รับเหมา</h3><input id=cname placeholder="ชื่อ"><input id=cphone placeholder="เบอร์โทร"><button onclick="addContractor()">บันทึก</button><div id=clist></div></div></section>
+
+<section id="payments" class="page"><div class="box"><h3>งวดการจ่าย</h3><input id=dueDate type=date><button onclick="addDue()">เพิ่มกำหนด</button><div id=dlist></div></div></section>
+
+<section id="settings" class="page"><div class="box"><h3>ตั้งค่า</h3><label>งบโครงการ</label><input id=budget type=number><button onclick="saveBudget()">บันทึกงบ</button><hr><button onclick="resetAll()" style="background:#dc2626">ล้างข้อมูลทั้งหมด</button></div></section>
+
+<div id=modal><div class=modal>
+<h3>เพิ่มรายการ</h3>
+<input id=iname placeholder="ชื่อรายการ">
+<select id=icat>
+<option>ที่ดิน</option><option>ถมที่</option><option>เคลียริ่ง</option><option>โครงสร้าง</option><option>เขื่อน</option><option>ถนน</option><option>ไฟฟ้า</option><option>เครื่องใช้ไฟฟ้า</option><option>อุปกรณ์ตกแต่ง</option><option>รั้วบ้าน</option><option>จัดสวน</option></select>
+<input id=iamount type=number placeholder="จำนวนเงิน">
+<button onclick="addExpense()">บันทึก</button>
+</div></div>
+
+<nav>
+<button data-page="dashboard" class="active">🏠</button>
+<button data-page="expenses">💸</button>
+<button data-page="contractors">👷</button>
+<button data-page="payments">📄</button>
+<button data-page="settings">⚙️</button>
+</nav>
+
+<script>
+let db=JSON.parse(localStorage.bp8||'{"budget":5800000,"expenses":[],"contractors":[],"dues":[]}');
+let pieChart,barChart;
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));}
+function save(){localStorage.bp8=JSON.stringify(db);render();}
+function openModal(){modal.style.display='flex'}
+function addExpense(){db.expenses.push({name:iname.value,cat:icat.value,amt:+iamount.value||0,date:new Date().toISOString()});modal.style.display='none';iname.value='';iamount.value='';save();}
+function del(i){db.expenses.splice(i,1);save();}
+function addContractor(){db.contractors.push({name:cname.value,phone:cphone.value});cname.value='';cphone.value='';save();}
+function addDue(){db.dues.push(dueDate.value);dueDate.value='';save();}
+function saveBudget(){db.budget=+budget.value||db.budget;save();}
+function resetAll(){if(confirm('ล้างข้อมูลทั้งหมด?')){localStorage.removeItem('bp8');location.reload();}}
+function render(){
+ budget.value=db.budget;
+ let spent=db.expenses.reduce((a,b)=>a+b.amt,0);
+ total.textContent=db.budget.toLocaleString();spentEl=window.spent;spentEl.textContent=spent.toLocaleString();remain.textContent=(db.budget-spent).toLocaleString();prog.textContent=Math.round(spent/db.budget*100)+'%';
+ let q=(search?search.value:'').toLowerCase();
+ elist.innerHTML=db.expenses.map((e,i)=>({e,i})).filter(o=>o.e.name.toLowerCase().includes(q)||o.e.cat.toLowerCase().includes(q)).map(o=>`<div class=row><div><b>${o.e.name}</b><br>${o.e.cat}</div><div>${o.e.amt.toLocaleString()}<br><button onclick='del(${o.i})'>ลบ</button></div></div>`).join('')||'ยังไม่มีรายการ';
+ clist.innerHTML=db.contractors.map(c=>`<div class=row><div>${c.name}</div><div>${c.phone}</div></div>`).join('')||'ยังไม่มีผู้รับเหมา';
+ dlist.innerHTML=db.dues.map(d=>`<div class=row><div>ครบกำหนด</div><div>${d}</div></div>`).join('')||'ยังไม่มีงวด';
+ let cats={};db.expenses.forEach(e=>cats[e.cat]=(cats[e.cat]||0)+e.amt);
+ if(pieChart)pieChart.destroy();pieChart=new Chart(pie,{type:'pie',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats)}]}});
+ let m=Array(12).fill(0);db.expenses.forEach(e=>m[new Date(e.date).getMonth()]+=e.amt);
+ if(barChart)barChart.destroy();barChart=new Chart(bar,{type:'bar',data:{labels:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],datasets:[{data:m,label:'รายเดือน'}]},options:{plugins:{legend:{display:false}}}});
+}
+render();
+</script></body></html>
