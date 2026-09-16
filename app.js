@@ -1,0 +1,30 @@
+
+const D=JSON.parse(localStorage.bpx||'{"budget":5800000,"cats":["ที่ดิน","ถมที่","เคลียริ่ง","โครงสร้าง","เขื่อน","ถนน","ไฟฟ้า","เครื่องใช้ไฟฟ้า","อุปกรณ์ตกแต่ง","รั้วบ้าน","จัดสวน"],"exp":[],"con":[],"due":[]}');
+const $=id=>document.getElementById(id); let pie;
+document.querySelectorAll('nav button').forEach((b,i)=>{if(i===0)b.classList.add('sel');b.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(b.dataset.page).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');};});
+function save(){localStorage.bpx=JSON.stringify(D);render();}
+$('openAdd').onclick=()=>$('modal').classList.remove('hide');
+$('closeModal').onclick=()=>$('modal').classList.add('hide');
+$('addCat').onclick=()=>{let c=$('newCat').value.trim();if(c&&!D.cats.includes(c)){D.cats.push(c);$('newCat').value='';save();}};
+$('saveExpense').onclick=()=>{if(!$('name').value||!$('amt').value)return alert('กรอกข้อมูลให้ครบ');D.exp.push({n:$('name').value,c:$('cat').value,a:+$('amt').value,d:new Date().toISOString()});$('modal').classList.add('hide');$('name').value='';$('amt').value='';save();};
+$('saveCon').onclick=()=>{if(!$('cn').value)return;D.con.push({n:$('cn').value,p:$('cp').value});$('cn').value='';$('cp').value='';save();};
+$('saveDue').onclick=()=>{if(!$('due').value)return;D.due.push($('due').value);$('due').value='';save();};
+$('saveBudget').onclick=()=>{D.budget=+$('budgetInput').value||D.budget;save();};
+$('backup').onclick=()=>{localStorage.bpxbak=JSON.stringify(D);alert('สำรองข้อมูลแล้ว');};
+$('restore').onclick=()=>{if(localStorage.bpxbak){Object.assign(D,JSON.parse(localStorage.bpxbak));save();}};
+window.del=i=>{D.exp.splice(i,1);save();};
+function render(){
+ $('budgetInput').value=D.budget;
+ $('cat').innerHTML=D.cats.map(c=>`<option>${c}</option>`).join('');
+ let spent=D.exp.reduce((a,b)=>a+b.a,0);
+ t.textContent=D.budget.toLocaleString(); s.textContent=spent.toLocaleString(); r.textContent=(D.budget-spent).toLocaleString(); pc.textContent=Math.round(spent/D.budget*100)+'%';
+ let sums={}; D.cats.forEach(c=>sums[c]=0); D.exp.forEach(e=>sums[e.c]=(sums[e.c]||0)+e.a);
+ budgetList.innerHTML=D.cats.map(c=>`<div class=row><span>${c}</span><b>${(sums[c]||0).toLocaleString()}</b></div>`).join('');
+ let qv=(q.value||'').toLowerCase();
+ expenseList.innerHTML=D.exp.map((e,i)=>({e,i})).filter(o=>o.e.n.toLowerCase().includes(qv)||o.e.c.toLowerCase().includes(qv)).map(o=>`<div class=row><div><b>${o.e.n}</b><br>${o.e.c}</div><div>${o.e.a.toLocaleString()}<br><button onclick='del(${o.i})'>ลบ</button></div></div>`).join('')||'ยังไม่มีรายการ';
+ conList.innerHTML=D.con.map(c=>`<div class=row><span>${c.n}</span><span>${c.p}</span></div>`).join('')||'ยังไม่มีผู้รับเหมา';
+ dueList.innerHTML=D.due.map(d=>`<div class=row><span>ครบกำหนด</span><span>${d}</span></div>`).join('')||'ยังไม่มีงวด';
+ if(window.Chart){ if(pie) pie.destroy(); pie=new Chart(pieCanvas,{type:'pie',data:{labels:D.cats,datasets:[{data:D.cats.map(c=>sums[c]||0)}]}}); }
+}
+const pieCanvas=document.getElementById('pie');
+q.oninput=render; render();
