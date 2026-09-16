@@ -1,0 +1,15 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Budget Pro 7</title><link rel="stylesheet" href="style.css"></head><body>
+<header><button id="menuBtn">☰</button><h2>🏡 Budget Pro 7</h2></header>
+<nav id="menu" class="hide">
+<a data-page="home">🏡 หน้าหลัก</a><a data-page="expenses">💸 รายจ่าย</a><a data-page="contractors">👷 ผู้รับเหมา</a><a data-page="payments">📄 งวดจ่าย</a><a data-page="charts">📊 กราฟ</a><a data-page="export">📤 Export</a><a data-page="settings">⚙️ ตั้งค่า</a></nav>
+<main>
+<section id="home" class="page active"><div class="grid"><div class="card g"><h4>งบรวม</h4><b id=t>5,000,000</b></div><div class="card b"><h4>ใช้ไป</h4><b id=u>0</b></div><div class="card y"><h4>คงเหลือ</h4><b id=l>5,000,000</b></div><div class="card p"><h4>ความคืบหน้า</h4><b id=p>0%</b></div></div></section>
+<section id="expenses" class="page"><input id=s placeholder="ค้นหา"><table><thead><tr><th>รายการ</th><th>จำนวน</th></tr></thead><tbody id=rows></tbody></table></section>
+<section id="contractors" class="page"><p>เพิ่มผู้รับเหมาได้</p></section>
+<section id="payments" class="page"><p>งวดการจ่าย</p></section>
+<section id="charts" class="page"><canvas id=c width=320 height=220></canvas></section>
+<section id="export" class="page"><button onclick="exportCSV()">Export CSV</button><button onclick="window.print()">Export PDF</button></section>
+<section id="settings" class="page"><button onclick="if(confirm('ล้างข้อมูล?')){localStorage.clear();location.reload()}">ล้างข้อมูล</button></section>
+</main><button id=fab>+</button>
+<div id=pop class="pop hide"><div class=box><h3>เพิ่มรายการ</h3><input id=n placeholder="รายการ"><input id=a type=number placeholder="จำนวนเงิน"><button id=save>บันทึก</button><button id=cancel>ยกเลิก</button></div></div>
+<script src="app.js"></script></body></html>
