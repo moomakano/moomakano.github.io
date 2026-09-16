@@ -1,111 +1,123 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ===== Budget Pro V10 =====
 
-  // ===== Sidebar =====
-  const menuBtn = document.getElementById("menuBtn");
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
+// เปิด/ปิด Sidebar
+const menuBtn=document.getElementById("menuBtn");
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
 
-  menuBtn?.addEventListener("click", () => {
-    sidebar.classList.add("open");
-    overlay.classList.add("show");
-  });
-
-  overlay?.addEventListener("click", closeMenu);
-
-  function closeMenu() {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("show");
-  }
-
-  // ===== Popup =====
-  const addBtn = document.getElementById("addBtn");
-  const popup = document.getElementById("popup");
-  const closePopup = document.getElementById("closePopup");
-
-  addBtn?.addEventListener("click", () => popup.classList.add("show"));
-  closePopup?.addEventListener("click", () => popup.classList.remove("show"));
-
-  // ===== เมนูทั้ง 7 =====
-  const sections = {
-    home: document.getElementById("home"),
-    expense: document.getElementById("expense"),
-    contractor: document.getElementById("contractor"),
-    payment: document.getElementById("payment"),
-    chart: document.getElementById("chart"),
-    export: document.getElementById("export"),
-    settings: document.getElementById("settings")
-  };
-
-  function show(name){
-    Object.values(sections).forEach(s=>{
-      if(s) s.style.display="none";
-    });
-    if(sections[name]) sections[name].style.display="block";
-    closeMenu();
-  }
-
-  document.getElementById("navHome")?.addEventListener("click",()=>show("home"));
-  document.getElementById("navExpense")?.addEventListener("click",()=>show("expense"));
-  document.getElementById("navContractor")?.addEventListener("click",()=>show("contractor"));
-  document.getElementById("navPayment")?.addEventListener("click",()=>show("payment"));
-  document.getElementById("navChart")?.addEventListener("click",()=>show("chart"));
-  document.getElementById("navExport")?.addEventListener("click",()=>show("export"));
-  document.getElementById("navSettings")?.addEventListener("click",()=>show("settings"));
-
-  // ===== Local Storage =====
-  let items = JSON.parse(localStorage.getItem("budgetItems") || "[]");
-
-  const list = document.getElementById("expenseTable");
-  const totalEl = document.getElementById("spent");
-  const remainEl = document.getElementById("remain");
-  const budget = 5000000;
-
-  function render(){
-    if(!list) return;
-
-    list.innerHTML="";
-
-    let spent=0;
-
-    items.forEach((i,index)=>{
-      spent+=Number(i.amount);
-
-      const tr=document.createElement("tr");
-      tr.innerHTML=`
-      <td>${i.name}</td>
-      <td>${Number(i.amount).toLocaleString()}</td>
-      <td><button onclick="deleteItem(${index})">🗑️</button></td>`;
-      list.appendChild(tr);
-    });
-
-    totalEl.textContent=spent.toLocaleString();
-    remainEl.textContent=(budget-spent).toLocaleString();
-  }
-
-  window.deleteItem=function(index){
-    items.splice(index,1);
-    localStorage.setItem("budgetItems",JSON.stringify(items));
-    render();
-  }
-
-  document.getElementById("saveItem")?.addEventListener("click",()=>{
-    const name=document.getElementById("itemName").value.trim();
-    const amount=document.getElementById("itemAmount").value;
-
-    if(!name||!amount){
-      alert("กรอกข้อมูลให้ครบ");
-      return;
-    }
-
-    items.push({name,amount});
-    localStorage.setItem("budgetItems",JSON.stringify(items));
-
-    document.getElementById("itemName").value="";
-    document.getElementById("itemAmount").value="";
-    popup.classList.remove("show");
-
-    render();
-  });
-
-  render();
+menuBtn?.addEventListener("click",()=>{
+  sidebar.classList.toggle("open");
+  overlay.classList.toggle("show");
 });
+
+overlay?.addEventListener("click",closeMenu);
+
+function closeMenu(){
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+// ===== เมนูทั้ง 7 ปุ่ม =====
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+  closeMenu();
+}
+
+document.querySelectorAll("[data-page]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    openPage(btn.dataset.page);
+  });
+});
+
+// ===== Popup เพิ่มรายการ =====
+const addBtn=document.getElementById("addBtn");
+const popup=document.getElementById("popup");
+const saveBtn=document.getElementById("saveExpense");
+const closeBtn=document.getElementById("closePopup");
+
+addBtn?.addEventListener("click",()=>{
+  popup.classList.add("show");
+});
+
+closeBtn?.addEventListener("click",()=>{
+  popup.classList.remove("show");
+});
+
+saveBtn?.addEventListener("click",saveExpense);
+
+let expenses=JSON.parse(localStorage.getItem("expenses")||"[]");
+
+function saveExpense(){
+
+  const name=document.getElementById("expenseName").value.trim();
+  const amount=Number(document.getElementById("expenseAmount").value);
+  const contractor=document.getElementById("expenseContractor").value;
+
+  if(!name||!amount){
+    alert("กรอกข้อมูลให้ครบ");
+    return;
+  }
+
+  expenses.unshift({
+    name,
+    amount,
+    contractor,
+    date:new Date().toLocaleDateString("th-TH")
+  });
+
+  localStorage.setItem("expenses",JSON.stringify(expenses));
+
+  popup.classList.remove("show");
+
+  document.getElementById("expenseName").value="";
+  document.getElementById("expenseAmount").value="";
+
+  renderTable();
+  updateCards();
+}
+
+// ===== ตาราง =====
+function renderTable(){
+
+  const tbody=document.getElementById("expenseTable");
+  if(!tbody)return;
+
+  tbody.innerHTML="";
+
+  expenses.forEach((e,i)=>{
+
+    tbody.innerHTML+=`
+    <tr>
+      <td>${e.date}</td>
+      <td>${e.name}</td>
+      <td>${e.contractor||"-"}</td>
+      <td>${e.amount.toLocaleString()}</td>
+      <td><button onclick="removeExpense(${i})">ลบ</button></td>
+    </tr>`;
+  });
+}
+
+window.removeExpense=function(i){
+  expenses.splice(i,1);
+  localStorage.setItem("expenses",JSON.stringify(expenses));
+  renderTable();
+  updateCards();
+}
+
+// ===== การ์ดสรุป =====
+const budget=5000000;
+
+function updateCards(){
+
+  const used=expenses.reduce((a,b)=>a+b.amount,0);
+
+  document.getElementById("usedCard").textContent=used.toLocaleString();
+  document.getElementById("remainCard").textContent=(budget-used).toLocaleString();
+  document.getElementById("progressCard").textContent=Math.round(used/budget*100)+"%";
+}
+
+// เริ่มต้น
+renderTable();
+updateCards();
+openPage("homePage");
